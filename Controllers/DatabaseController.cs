@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using QueryBuilderApi.Models;
+using QueryBuilderApi.Services;
 
 namespace QueryBuilderApi.Controllers
 {
@@ -7,20 +8,20 @@ namespace QueryBuilderApi.Controllers
     [Route("api/[controller]")]
     public class DatabaseController : ControllerBase
     {
-        [HttpGet("test")]
-        public IActionResult GetTest()
+        private readonly DatabaseService _databaseService;
+
+        // Injecting the DatabaseService into the controller
+        public DatabaseController(DatabaseService databaseService)
         {
-            return Ok(new{ message = "Database Controller Working"});
+            _databaseService = databaseService;
         }
+
 
         [HttpPost("create")]
         public IActionResult CreateDatabase([FromBody] CreateDatabaseDto dto)
         {
-            return Ok(new
-            {
-                message = "Database registered",
-                data = dto
-            });
+            var result = _databaseService.CreateDatabase(dto);
+            return Ok(new {message = result});
         }
     }
 }
