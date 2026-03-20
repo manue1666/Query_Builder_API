@@ -1,6 +1,6 @@
 namespace QueryBuilderApi.Models
 {
-    public class QueryResponse
+    public class Query
     {
         public int Id { get; set;}
         public required string Description { get; set; }

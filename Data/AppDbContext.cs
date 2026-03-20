@@ -10,5 +10,6 @@ namespace QueryBuilderApi.Data
         {
         }
         public DbSet<Database> Databases { get; set; }
+        public DbSet<Query> Queries { get; set; }
     }
 }

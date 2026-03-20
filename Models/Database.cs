@@ -7,5 +7,7 @@ namespace QueryBuilderApi.Models
         public required string Description {get; set;}
         public required string SqlSchema {get; set;}
         public required DateTime CreatedAt {get; set;}
+        public List<Query> Queries { get; set;} = new List<Query>();
+
     }
 }
