@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using QueryBuilderApi.Data;
 using QueryBuilderApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<DatabaseService>();
+
+builder.Services.AddDbContext<AppDbContext>(options => 
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 
@@ -19,8 +25,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 // Activate Controllers
 app.MapControllers();
-
-
 
 
 app.Run();
