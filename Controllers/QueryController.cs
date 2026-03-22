@@ -16,9 +16,9 @@ namespace QueryBuilderApi.Controllers
         }
 
         [HttpPost("generate")]
-        public IActionResult GenerateQuery([FromBody] GenerateQueryRequest request)
+        public async Task<IActionResult> GenerateQuery([FromBody] GenerateQueryRequest request)
         {
-            var result = _queryService.GenerateQuery(request);
+            var result = await _queryService.GenerateQuery(request);
             if(result == null)
             {
                 return NotFound(new { message = "database for query not found" });

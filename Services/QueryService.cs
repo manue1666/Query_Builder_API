@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using QueryBuilderApi.Data;
 using QueryBuilderApi.Models;
 
@@ -6,23 +7,26 @@ namespace QueryBuilderApi.Services
     public class QueryService
     {
         private readonly AppDbContext _dbcontext;
+        private readonly GroqService _groqService;
 
-        public QueryService(AppDbContext context)
+        public QueryService(AppDbContext context, GroqService groqService)
         {
             _dbcontext = context;
+            _groqService = groqService;
         }
 
-        public Query? GenerateQuery(GenerateQueryRequest request)
+        public async Task<Query?> GenerateQuery(GenerateQueryRequest request)
         {
             var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == request.DatabaseId);
             if(database == null)
             {
                 return null;
             }
+            var generatedSql = await _groqService.GenerateSqlFromDescription(database.SqlSchema, request.Description);
             var query = new Query
             {
                 Description = request.Description,
-                GeneratedSql = $"-- SQL query generated for database: {database.Name} based on description: {request.Description}",
+                GeneratedSql = generatedSql,
                 DatabaseId = request.DatabaseId,
                 CreatedAt = DateTime.UtcNow
             };
