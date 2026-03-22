@@ -30,5 +30,29 @@ namespace QueryBuilderApi.Services
             _dbcontext.SaveChanges();
             return query;
         }
+
+        public List<Query> GetAllQueriesByDatabaseId(int databaseId)
+        {
+            var queries = _dbcontext.Queries.Where(q => q.DatabaseId == databaseId).ToList();
+            return queries;
+        }
+
+        public Query? GetQueryById(int id)
+        {
+            var query = _dbcontext.Queries.FirstOrDefault(q => q.Id == id);
+            return query;
+        }
+
+        public bool DeleteQuery(int id)
+        {
+            var query = _dbcontext.Queries.FirstOrDefault(q => q.Id == id);
+            if(query == null)
+            {
+                return false;
+            }
+            _dbcontext.Queries.Remove(query);
+            _dbcontext.SaveChanges();
+            return true;
+        }
     }
 }
