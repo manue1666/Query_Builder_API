@@ -12,35 +12,36 @@ namespace QueryBuilderApi.Services
         {
             _dbcontext = context;
         }
-        public string CreateDatabase(CreateDatabaseDto dto)
+        public string CreateDatabase(int userId, CreateDatabaseDto dto)
         {
             var database = new Database
             {
                 Name = dto.Name,
                 Description = dto.Description,
                 SqlSchema = dto.SqlSchema,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                UserId = userId
             };
             _dbcontext.Databases.Add(database);
             _dbcontext.SaveChanges();
             return $"DB: |{database.Name}| saved successfully with id: {database.Id}";
         }
 
-        public List<Database> GetAllDatabases()
+        public List<Database> GetAllDatabases(int userId)
         {
-            var databases = _dbcontext.Databases.ToList();
+            var databases = _dbcontext.Databases.Where(db => db.UserId == userId).ToList();
             return databases;
         }
         
-        public Database? GetDatabaseById(int id)
+        public Database? GetDatabaseById(int id, int userId)
         {
-            var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == id);
+            var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == id && db.UserId == userId);
             return database;
         }
 
-        public bool DeleteDatabase(int id)
+        public bool DeleteDatabase(int id, int userId)
         {
-            var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == id);
+            var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == id && db.UserId == userId);
             if (database == null)
             {
                 return false;
@@ -50,9 +51,9 @@ namespace QueryBuilderApi.Services
             return true;
         }
 
-        public bool UpdateDatabase(int id, UpdateDatabaseDto dto)
+        public bool UpdateDatabase(int id, int userId, UpdateDatabaseDto dto)
         {
-            var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == id);
+            var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == id && db.UserId == userId);
             if(database == null)
             {
                 return false;

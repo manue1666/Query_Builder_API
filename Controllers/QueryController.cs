@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 using QueryBuilderApi.Models;
 using QueryBuilderApi.Services;
@@ -15,24 +16,26 @@ namespace QueryBuilderApi.Controllers
             _queryService = queryService;
         }
 
+
         [HttpPost("generate")]
         public async Task<IActionResult> GenerateQuery([FromBody] GenerateQueryRequest request)
         {
             var result = await _queryService.GenerateQuery(request);
             if(result == null)
             {
-                return NotFound(new { message = "database for query not found" });
+                return NotFound(new ApiResponse<string> { Success = false, Message = "Database not found for the provided ID" });
             }
 
-            return Ok(new {message = "Query successfully generated", data = result});
+            return Ok(new ApiResponse<object> { Success = true, Message = "Query successfully generated", Data = result });
         }
 
         [HttpGet("all/{databaseId}")]
         public IActionResult GetAllQueriesByDatabaseId(int databaseId)
         {
             var queries = _queryService.GetAllQueriesByDatabaseId(databaseId);
-            return Ok(new { message = "Queries retrieved successfully", data = queries });
+            return Ok(new ApiResponse<object> { Success = true, Message = "Queries retrieved successfully", Data = queries });
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetQueryById(int id)
@@ -40,10 +43,11 @@ namespace QueryBuilderApi.Controllers
             var query = _queryService.GetQueryById(id);
             if(query == null)
             {
-                return NotFound(new { message = "Query not found" });
+                return NotFound(new ApiResponse<string> { Success = false, Message = "Query not found" });
             }
-            return Ok(new { message = "Query retrieved successfully", data = query });
+            return Ok(new ApiResponse<object> { Success = true, Message = "Query retrieved successfully", Data = query });
         }
+
 
         [HttpDelete("{id}")]
         public IActionResult DeleteQuery(int id)
@@ -51,9 +55,9 @@ namespace QueryBuilderApi.Controllers
             var result = _queryService.DeleteQuery(id);
             if(!result)
             {
-                return NotFound(new { message = "Query not found" });
+                return NotFound(new ApiResponse<string> { Success = false, Message = "Query not found" });
             }
-            return Ok(new { message = "Query deleted successfully" });
+            return Ok(new ApiResponse<string> { Success = true, Message = "Query deleted successfully" });
         }
     }
 }
