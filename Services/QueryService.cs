@@ -15,7 +15,7 @@ namespace QueryBuilderApi.Services
             _groqService = groqService;
         }
 
-        public async Task<Query?> GenerateQuery(GenerateQueryRequest request)
+        public async Task<Query?> GenerateQuery(GenerateQueryRequest request, int userId)
         {
             var database = _dbcontext.Databases.FirstOrDefault(db => db.Id == request.DatabaseId);
             if(database == null)
@@ -28,28 +28,29 @@ namespace QueryBuilderApi.Services
                 Description = request.Description,
                 GeneratedSql = generatedSql,
                 DatabaseId = request.DatabaseId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                UserId = userId
             };
             _dbcontext.Queries.Add(query);
             _dbcontext.SaveChanges();
             return query;
         }
 
-        public List<Query> GetAllQueriesByDatabaseId(int databaseId)
+        public List<Query> GetAllQueriesByDatabaseId(int databaseId, int userId)
         {
-            var queries = _dbcontext.Queries.Where(q => q.DatabaseId == databaseId).ToList();
+            var queries = _dbcontext.Queries.Where(q => q.DatabaseId == databaseId && q.UserId == userId).ToList();
             return queries;
         }
 
-        public Query? GetQueryById(int id)
+        public Query? GetQueryById(int id, int userId)
         {
-            var query = _dbcontext.Queries.FirstOrDefault(q => q.Id == id);
+            var query = _dbcontext.Queries.FirstOrDefault(q => q.Id == id && q.UserId == userId);
             return query;
         }
 
-        public bool DeleteQuery(int id)
+        public bool DeleteQuery(int id, int userId  )
         {
-            var query = _dbcontext.Queries.FirstOrDefault(q => q.Id == id);
+            var query = _dbcontext.Queries.FirstOrDefault(q => q.Id == id && q.UserId == userId);
             if(query == null)
             {
                 return false;
