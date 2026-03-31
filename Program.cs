@@ -4,6 +4,20 @@ using QueryBuilderApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Para Railway: convertir DATABASE_URL a ConnectionString
+var databaseUrl = builder.Configuration["DATABASE_URL"];
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    var uri = new Uri(databaseUrl);
+    var db = uri.AbsolutePath.Substring(1);
+    var user = uri.UserInfo.Split(":")[0];
+    var password = uri.UserInfo.Split(":")[1];
+    var host = uri.Host;
+    var port = uri.Port;
+    var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password};SSL Mode=Require;";
+    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+}
+
 //Services
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -32,12 +46,14 @@ builder.Services.AddAuthentication("Bearer")
             )
         };
     });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
                 "http://localhost:4200",
+                "http://localhost:3000",
                 "https://gestion-pacientes-59510.web.app/"
             )
             .AllowAnyMethod()
@@ -64,7 +80,6 @@ app.UseAuthorization();
 
 // Activate Controllers
 app.MapControllers();
-
 
 app.Run();
 
