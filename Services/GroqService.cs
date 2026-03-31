@@ -5,19 +5,32 @@ namespace QueryBuilderApi.Services
 {
     public class GroqService
     {
-        private readonly GroqApiClient _groqClient;
+        private readonly GroqApiClient? _groqClient;
+        private readonly bool _isConfigured;
 
         public GroqService(IConfiguration configuration)
         {
             var apiKey = configuration["Groq:ApiKey"];
-            if (string.IsNullOrEmpty(apiKey))
-                throw new InvalidOperationException("Groq API Key not configured");
             
-            _groqClient = new GroqApiClient(apiKey);
+            // No lanzar excepción en el constructor
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                _isConfigured = false;
+                _groqClient = null;
+            }
+            else
+            {
+                _isConfigured = true;
+                _groqClient = new GroqApiClient(apiKey);
+            }
         }
 
         public async Task<string> GenerateSqlFromDescription(string databaseSchema, string userDescription)
         {
+            // Lanzar excepción solo cuando se intente usar el servicio
+            if (!_isConfigured || _groqClient == null)
+                return "ERROR: Groq API Key not configured";
+
             var messages = new JsonArray
             {
                 new JsonObject
