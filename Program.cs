@@ -54,7 +54,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:4200",
                 "http://localhost:3000",
-                "https://gestion-pacientes-59510.web.app/"
+                "https://gestion-pacientes-59510.web.app"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
