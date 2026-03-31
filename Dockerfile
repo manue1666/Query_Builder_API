@@ -19,9 +19,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Ejecutar migraciones antes de iniciar
-RUN dotnet ef database update || true
-
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 

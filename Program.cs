@@ -81,5 +81,20 @@ app.UseAuthorization();
 // Activate Controllers
 app.MapControllers();
 
+// Auto-migrate on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        // Log the error
+        Console.WriteLine($"Migration failed: {ex.Message}");
+    }
+}
+
 app.Run();
 
