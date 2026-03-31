@@ -1,5 +1,8 @@
 bin/
 obj/
-.vs/
+appsettings.Development.json
 *.user
-*.suo
+.vs/
+.vscode/
+.env
+user-secrets/
